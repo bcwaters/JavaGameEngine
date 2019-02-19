@@ -1,8 +1,5 @@
 package com.devwaters.JavaGameEngine;
-
-
-class Vector //momentum etc
-{
+class Vector{
     private int i;
     private int j;
 
@@ -50,9 +47,8 @@ class Vector //momentum etc
     public Vector getMagnitude() {
         int magI;
         int magJ;
-
-        if (i < 0) // thse two statements return the absolute value of the vector
-        {
+        // thse two statements return the absolute value of the vector
+        if (i < 0){
             magI = -i;
         } else {
             magI = i;

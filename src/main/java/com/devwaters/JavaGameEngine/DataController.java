@@ -1,11 +1,10 @@
 package com.devwaters.JavaGameEngine;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
-
-class DataController extends JFrame implements Runnable // this class will hold objects to be shared by other classes along with those classes.
-{
+// this class will hold objects to be shared by other classes along with those classes.
+class DataController extends JFrame implements Runnable{
     char[] charEvents;
     GameObject[] gameObjects;
     GameEvent[] keyEvents;
@@ -42,11 +41,10 @@ class DataController extends JFrame implements Runnable // this class will hold 
         currentProfile = initialProfile;
     }
 
-    public void getKeyEvents(char[] passedArray) //change to detailed key Events. Time held down, quick presseds etc.
-    {
+    //change to detailed key Events. Time held down, quick presseds etc.
+    public void getKeyEvents(char[] passedArray) {
         charEvents = passedArray;
     }
-
     public void processGameEvents(GameEvent[] eventsPassed) {
         //System.out.println("This is before the for loop Event" + eventsPassed[0]);
         for (int i = 0; i < eventsPassed.length; i++) {
@@ -55,14 +53,13 @@ class DataController extends JFrame implements Runnable // this class will hold 
                 currentLoopEvent = new GameEvent();
             }
 
-
             if (currentLoopEvent.getEventType() != currentLoopEvent.NULLEVENT) {
-                gameObjects[currentLoopEvent.getObjectLocation()].processGameEvent(currentLoopEvent); //if this is not a null event, get array index for object and process event
+                //if this is not a null event, get array index for object and process event
+                gameObjects[currentLoopEvent.getObjectLocation()].processGameEvent(currentLoopEvent);
                 System.out.println(gameObjects[0]);
             }
         }
     }
-
     public void clearGameEvents(GameEvent[] events) {
         for (int i = 0; i < events.length; i++)  //sets all spots to empty game events
         {
@@ -83,50 +80,35 @@ class DataController extends JFrame implements Runnable // this class will hold 
             if (i < keyEvents.length) {
                 keyEvents[i + 1] = new GameEvent();
             }
-
         }
         return keyEvents;
-
     }
 
     public void run() {
-
-
-        currentScreen.setArray(gameObjects);                        //this section passes arrays before any changes are made
+    //this section passes arrays before any changes are made
+        currentScreen.setArray(gameObjects);
         currentEnvironmentPhysics.setArray(gameObjects);
-
 
         clearGameEvents(physicsEvents);
         clearGameEvents(keyEvents);
-
-        currentEnvironmentPhysics.applySpeedLimit();                // allow everything to process data
+        // allow everything to process data
+        currentEnvironmentPhysics.applySpeedLimit();
         currentEnvironmentPhysics.applyVectorDecay();
-
-
-        keyEvents = charEventToKeyEvent(charEvents);                                //fix this to have an array for keyEvents
-        physicsEvents = currentEnvironmentPhysics.returnChanges();    //this section creates events to be processed
-
+        //fix this to have an array for keyEvents
+        keyEvents = charEventToKeyEvent(charEvents);
+        //this section creates events to be processed
+        physicsEvents = currentEnvironmentPhysics.returnChanges();
 
         //System.out.println("this is good, the physics events are coming in \n:" + physicsEvents[0]);
-
         //System.out.println("before processing thsi is object: " + gameObjects[0]);
         //System.out.println("this is the event sent: " +  physicsEvents[0]);
         processGameEvents(physicsEvents);
-
         //System.out.println("fater processing thsi is object: " + gameObjects[0]);
-
-
         processGameEvents(keyEvents);                            //process and empty the events
-
         gameObjects[0].update();                                        //update locations(translate vectors)
-
         try {
             Thread.sleep(100);
-
-        } catch (Exception e)
-
-        {
-
+        } catch (Exception e) {
         }
 
     }//end run
@@ -135,7 +117,6 @@ class DataController extends JFrame implements Runnable // this class will hold 
         for (int i = 0; i < gameObjects.length; i++) {
             gameObjects[i] = new GameObject();
         }
-
     }
 
     public void recieveGraphics(Graphics g) {
@@ -143,14 +124,10 @@ class DataController extends JFrame implements Runnable // this class will hold 
     }
 
     public String toString() {
-
         String outputString = "";
-
         for (int i = 0; charEvents[i] != '\0'; i++) {
             outputString += keyEvents[i];
         }
-
         return outputString;
     }
-
 }// end PlayerContoller

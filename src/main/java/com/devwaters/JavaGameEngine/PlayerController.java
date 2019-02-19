@@ -1,10 +1,6 @@
 package com.devwaters.JavaGameEngine;
-
-import java.awt.*;
-import javax.swing.*;
-import javax.swing.JPanel;
-import java.awt.event.*;
-
+import java.awt.event.KeyEvent;
+import java.awt.event.KeyListener;
 
 class PlayerController implements KeyListener {
     char[] charArray;
@@ -15,54 +11,42 @@ class PlayerController implements KeyListener {
 
     public PlayerController() {
         charArray = new char[MAXSIZE];
-
         arraySize = 0;
         charsAdded = "";
-
     }
-
     public void addToArray(char c) {
-
         if (arraySize < MAXSIZE) {
             charArray[arraySize] = c;
             arraySize++;
         }
     }
 
-
     public void keyPressed(KeyEvent e) {
         convertedEvent = e.getKeyChar();
-
-        if (charsAdded.indexOf(convertedEvent) == -1) //This checks if the char is in the string
-        {
+        //This checks if the char is in the string
+        if (charsAdded.indexOf(convertedEvent) == -1){
             this.addToArray(convertedEvent);
             charsAdded += convertedEvent;
         }
-
     }
 
     public void keyTyped(KeyEvent e) {
         convertedEvent = e.getKeyChar();
-
-        if (charsAdded.indexOf(convertedEvent) == -1) {
+        if (charsAdded.indexOf(convertedEvent) == -1){
             this.addToArray(convertedEvent);
             charsAdded += convertedEvent;
         }
-
     }
 
     public void keyReleased(KeyEvent e) {
         convertedEvent = e.getKeyChar();
-
-        if (charsAdded.indexOf(convertedEvent) == -1) {
-
+        if (charsAdded.indexOf(convertedEvent) == -1){
             this.addToArray(convertedEvent);
             charsAdded += convertedEvent;
         }
     }
-
-    public char[] getStack() //change to a stack.  Also empties the array and resets the Charadded string
-    {
+    //change to a stack.  Also empties the array and resets the Charadded string
+    public char[] getStack(){
         char[] passArray = charArray;
         arraySize = 0;
         charArray = new char[11];

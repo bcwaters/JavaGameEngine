@@ -1,7 +1,7 @@
 package com.devwaters.JavaGameEngine;
 
+import javax.swing.*;
 import java.awt.*;
-import javax.swing.JPanel;
 
 class Screen extends JPanel {
     GameObject[] gameObjects;
@@ -14,24 +14,19 @@ class Screen extends JPanel {
         setSize(300, 400);
     }//end constructor
 
-    public void paintComponent(Graphics g) {
-
+    public void paintComponent(Graphics g){
 
         super.paintComponent(g);
         gameObjects[0].paintObject(g);
         g.setColor(Color.BLUE);
         gameObjects[1].paintObject(g);
         g.drawString("yes", 55, 55);
-
     }
 
-
-    public void setGraphics(Graphics g) {
-
-
+    public void setGraphics(Graphics g){
     }
 
-    public void setArray(GameObject[] passedArray) {
+    public void setArray(GameObject[] passedArray){
         gameObjects = passedArray;
     }
 

@@ -1,7 +1,7 @@
 package com.devwaters.JavaGameEngine;
 
-import java.awt.*;
 import javax.swing.*;
+import java.awt.*;
 
 class GameObject extends JComponent  // This class represents heros, walls, anything physical in the game
 {
@@ -46,22 +46,19 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
     public boolean withinVectorBounds(Vector limit) {
 
         Vector magnitude = objectVector.getMagnitude();
-
-        boolean testBool = !(magnitude.getI() < limit.getI() && magnitude.getJ() < limit.getJ()); // returns a boolean indicating if i or j is too big
-
+        boolean testBool = !(magnitude.getI() < limit.getI() && magnitude.getJ() < limit.getJ());
+        // returns a boolean indicating if i or j is too big
         return testBool;
     }
 
     public Vector applyVectorDecay(int decayLimit, int decayAmount) {
         int currentI = objectVector.getI();
-
         int currentJ = objectVector.getJ();
-
         int newVectorI = 0;
         int newVectorJ = 0;
 
-        if (!isMoving)    //is moving represents wheter or not a control request has been made
-        {
+        if (!isMoving){
+            //is moving represents wheter or not a control request has been made
             if (Math.abs(currentI) > decayLimit) {
                 if (currentI > 0) {
                     newVectorI = -decayAmount; // i am skeptical of this change nvm this works now, NewVector should be called change amount
@@ -69,7 +66,6 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
                     newVectorI = decayAmount;
                 }
             }
-
             if (Math.abs(currentJ) > decayLimit) {
                 if (currentJ > 0) {
                     newVectorJ = -decayAmount;
@@ -78,12 +74,10 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
                 }
             }
         }
-
         isMoving = false; //Reset to false, which won't be retriggered until moving stops for one thread cycle
         return new Vector(newVectorI, newVectorJ);
 
     }
-
 
     public void paintObject(Graphics g) {
         g.fillOval(location.getX(), location.getY(), size.getHeight(), size.getWidth());
@@ -91,36 +85,26 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
         g.fillOval(size.getCenterPoint().getX(), size.getCenterPoint().getY(), 2, 2);
     }
 
-
     public void setLocation(int x, int y) {
         location = new CanvasLocation(x, y);
     }
-
     public void processGameEvent(GameEvent passedEvent) {
-
         //System.out.println("object called to process event: +" + passedEvent);
         if (passedEvent.getEventType() == MOVEUP) {
             moveUp();
         }
-
         if (passedEvent.getEventType() == MOVEDOWN) {
             moveDown();
         }
-
         if (passedEvent.getEventType() == MOVERIGHT) {
             moveRight();
         }
-
         if (passedEvent.getEventType() == MOVELEFT) {
             moveLeft();
         }
-
         if (passedEvent.getEventType() == passedEvent.LIMITEVENT) {
-
             addVector(passedEvent.getEventVector());
-
         }
-
         if (passedEvent.getEventType() == passedEvent.DECAYEVENT) {
             addVector(passedEvent.getEventVector());
             isMoving = false;
@@ -153,61 +137,47 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
         objectVector.addI(-1);
     }
 
-
     public void addVector(Vector vectorToAdd) {
         objectVector.add(vectorToAdd);
     }
-
     public Vector applyVectorLimit(Vector limit) {
         int newI = 0;
         int newJ = 0;
-
-
         if (objectVector.getMagnitude().getI() > limit.getI()) {
-            if (objectVector.getI() > 0)
-
-            {
-                newI = limit.getI() - objectVector.getI();  //the differnce between this added to a vector will result in the limit vector
+            if (objectVector.getI() > 0) {
+                newI = limit.getI() - objectVector.getI();
+                //the differnce between this added to a vector will result in the limit vector
             }
-            if (objectVector.getI() < 0) {
+            if (objectVector.getI() < 0){
                 newI = (-1) * (objectVector.getI() + limit.getI());
             }
-
         } else {
-
             newI = 0;
-
         }
-
         if (objectVector.getMagnitude().getJ() > limit.getJ()) {
             if (objectVector.getJ() > 0) {
-                newJ = limit.getJ() - objectVector.getJ();  //the differnce between this added to a vector will result in the limit vector
+                newJ = limit.getJ() - objectVector.getJ();
+                //the differnce between this added to a vector will result in the limit vector
             }
-
             if (objectVector.getJ() < 0) {
                 newJ = (-1) * (objectVector.getJ() + limit.getJ());
             }
-
         } else {
             newJ = 0;
         }
-
         System.out.println("A vector is being applied: " + new Vector(newI, newJ));
         return new Vector(newI, newJ);
-
     }
 
     public Vector getObjectVector() {
         return objectVector;
     }
-
-    public void update() // This will apply vectors to locations
-    {
+    // This will apply vectors to locations
+    public void update(){
         CanvasLocation updatedLocation = new CanvasLocation(location.getX() + objectVector.getI(), location.getY() + objectVector.getJ());
         this.setLocation(updatedLocation.getX(), updatedLocation.getY());
         size.updateCenterPoint(location);
     }
-
     public String toString() {
         String returnString = "";
         returnString += "Location: " + location + "\n vector: " + objectVector;

@@ -1,8 +1,7 @@
 package com.devwaters.JavaGameEngine;
 
-class CollisionDetection //the environment physics will have a collision detection unit that returns events to add.
-{
-
+//the environment physics will have a collision detection unit that returns events to add.
+class CollisionDetection {
     int currentDistance;
     int futureDistance;
 
@@ -15,9 +14,7 @@ class CollisionDetection //the environment physics will have a collision detecti
     int object_02_LengthRadius;
 
     GameObject object_01;  //object to change
-
     GameObject object_02;    //object to compare
-
     GameEvent event = new GameEvent(); // added this to access event types for passing
 
     public CollisionDetection() {
@@ -28,19 +25,17 @@ class CollisionDetection //the environment physics will have a collision detecti
         yDistance = calculateYDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
     }
 
-    public CollisionDetection(GameObject _01, GameObject _02)//this is a tester constructor, won't be used
-    {
+    //this is a tester constructor, won't be used
+    public CollisionDetection(GameObject _01, GameObject _02) {
         object_01 = _01;
         object_02 = _02;
 
-
         xDistance = calculateXDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
         yDistance = calculateYDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
-
     }
 
-    public void detectCollision(GameObject _01, GameObject _02) //two object are passed for comparison
-    {
+    //two object are passed for comparison
+    public void detectCollision(GameObject _01, GameObject _02) {
         object_01 = _01;
         object_02 = _02;
     }
@@ -48,20 +43,17 @@ class CollisionDetection //the environment physics will have a collision detecti
     public int calculateFutureDistance(GameObject _01, GameObject _02) {
         int distanceToReturn = 0;
 
-
         CanvasLocation futureLocation_01 = _01.getCanvasLocation();  //This is all preparation below
         CanvasLocation futureLocation_02 = _02.getCanvasLocation();
 
         futureLocation_01.applyVector(_01.getObjectVector()); //I should make a location function that is pass a vector to update
         futureLocation_02.applyVector(_02.getObjectVector());
-
-
         //futureDistance =  calculateDistance();		//Almost did an approach recursive in nature, changed mind
         return distanceToReturn;
     }
 
-    public int calculateDistance(CanvasLocation location1, CanvasLocation location2)  //I am using a sqrt but i can optimize this
-    {
+    //I am using a sqrt but i can optimize this
+    public int calculateDistance(CanvasLocation location1, CanvasLocation location2) {
         return (int) Math.sqrt(Math.pow(calculateXDistance(location1, location2), 2) + Math.pow(calculateYDistance(location1, location2), 2));
     }
 

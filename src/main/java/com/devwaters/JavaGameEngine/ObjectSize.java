@@ -7,6 +7,7 @@ class ObjectSize //this class is to define the amount of space the object takes 
     private int width;
     private int heightRadius;
     private int widthRadius;
+
     private CanvasLocation centerPoint;
 
     public ObjectSize(CanvasLocation paintLocation, int _height, int _width) {
@@ -14,19 +15,16 @@ class ObjectSize //this class is to define the amount of space the object takes 
         width = _width;
         heightRadius = height / 2;
         widthRadius = width / 2;
-        centerPoint = new CanvasLocation(paintLocation.getX() + widthRadius, paintLocation.getY() + heightRadius);
+        centerPoint = new CanvasLocation(paintLocation.getX() + widthRadius,
+                                         paintLocation.getY() + heightRadius);
     }
-    public int getHeight() {
-        return height;
-
-    }
-
+    public int getHeight() {return height;}
     public int getWidth() {
         return width;
     }
-    public void setHeight(int _height) {
-        height = _height;
-    }
+    public int getHeightRadius() {return heightRadius;}
+    public int getWidthRadius() {return widthRadius;}
+    public void setHeight(int _height) {height = _height;}
     public void setWidth(int _width) {
         width = _width;
     }

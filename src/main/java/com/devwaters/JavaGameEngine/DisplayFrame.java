@@ -1,24 +1,24 @@
 package com.devwaters.JavaGameEngine;
 
 import javax.swing.*;
+import java.util.Stack;
 
 class DisplayFrame extends JFrame {
-    PlayerController currentPlayerController = new PlayerController();
-    char currentChar = 's';
+    PlayerController PlayerKeyListener = new PlayerController();
 
     public DisplayFrame(String title) {
         setName(title);
         setDefaultCloseOperation(EXIT_ON_CLOSE);
         setSize(800, 800);
-        this.addKeyListener(currentPlayerController);
+        this.addKeyListener(PlayerKeyListener);
     }
     public void changeScreen(JPanel newScreen) {
         getContentPane().removeAll();
         getContentPane().add(newScreen);
     }
 
-    public char[] getStack(){
-        return currentPlayerController.getStack();
+    public Stack<Character> getKeyEventStack(){
+        return PlayerKeyListener.getStack();
     }
 
 }//end DisplayFrame

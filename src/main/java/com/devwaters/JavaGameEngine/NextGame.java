@@ -5,19 +5,25 @@ public class NextGame {
 
     public static void main(String[] args) {
 
-        GameObject onlyGameObject = new GameObject(55, 55);
-        DataController testData = new DataController(onlyGameObject, heroFocused);
-        Thread t1 = new Thread(testData);
+        GameObject playerGameObject = new GameObject(55, 55, GameObject.HERO);
+        DataController GameState = new DataController(playerGameObject, heroFocused);
+        Thread t1 = new Thread(GameState);
         DisplayFrame gameWindow = new DisplayFrame("GameWindow");
         gameWindow.setVisible(true);
-        gameWindow.changeScreen(testData.currentScreen);
-        testData.setFocusable(true);
+        gameWindow.changeScreen(GameState.currentScreen);
+        GameState.setFocusable(true);
         while (true) {
+
+            //Model
             t1.run();
-            testData.getKeyEvents(gameWindow.getStack());
-            testData.requestFocusInWindow();
-            testData.currentScreen.repaint();
-            //System.out.println(testData);
+
+            //Controller
+            //Notify the GameState whenever a user presses a key
+            GameState.pushKeyEventsToGameEventStack(gameWindow.getKeyEventStack());
+
+            //View
+            GameState.requestFocusInWindow();
+            GameState.currentScreen.repaint();
         }
 
     }

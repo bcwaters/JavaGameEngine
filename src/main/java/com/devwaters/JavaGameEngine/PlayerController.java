@@ -1,9 +1,11 @@
 package com.devwaters.JavaGameEngine;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.Stack;
 
 class PlayerController implements KeyListener {
     char[] charArray;
+    Stack<Character> keyPressedStack;
     int arraySize;
     final int MAXSIZE = 100;
     String charsAdded;
@@ -11,6 +13,7 @@ class PlayerController implements KeyListener {
 
     public PlayerController() {
         charArray = new char[MAXSIZE];
+        keyPressedStack = new Stack<Character>();
         arraySize = 0;
         charsAdded = "";
     }
@@ -19,10 +22,12 @@ class PlayerController implements KeyListener {
             charArray[arraySize] = c;
             arraySize++;
         }
+        keyPressedStack.push(c);
     }
 
+    //TODO i believe the Keyevent needs to check for keycodes instead
+    //This will allow all keys on the keyboard
     public void keyPressed(KeyEvent e) {
-        convertedEvent = e.getKeyChar();
         //This checks if the char is in the string
         if (charsAdded.indexOf(convertedEvent) == -1){
             this.addToArray(convertedEvent);
@@ -45,13 +50,13 @@ class PlayerController implements KeyListener {
             charsAdded += convertedEvent;
         }
     }
-    //change to a stack.  Also empties the array and resets the Charadded string
-    public char[] getStack(){
+    //TODO change to a stack.  Also empties the array and resets the Charadded string
+    public Stack<Character> getStack(){
         char[] passArray = charArray;
         arraySize = 0;
         charArray = new char[11];
         charsAdded = "";
-        return passArray;
+        return keyPressedStack;
     }
 
 }

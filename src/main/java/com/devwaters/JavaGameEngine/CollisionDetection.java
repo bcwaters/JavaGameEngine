@@ -2,72 +2,61 @@ package com.devwaters.JavaGameEngine;
 
 //the environment physics will have a collision detection unit that returns events to add.
 class CollisionDetection {
-    int currentDistance;
+
     int futureDistance;
 
-    int xDistance;
-    int yDistance;
-
-    int object_01_WidthRadius;
-    int object_02_WidthRadius;
-    int object_01_LengthRadius;
-    int object_02_LengthRadius;
-
-    GameObject object_01;  //object to change
-    GameObject object_02;    //object to compare
-    GameEvent event = new GameEvent(); // added this to access event types for passing
+    private GameObject object_01;  //object to change
+    private GameObject object_02;    //object to compare
 
     public CollisionDetection() {
-        object_01 = new GameObject(20, 30);
-        object_01 = new GameObject(50, 50);
 
-        xDistance = calculateXDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
-        yDistance = calculateYDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
-    }
-
-    //this is a tester constructor, won't be used
-    public CollisionDetection(GameObject _01, GameObject _02) {
-        object_01 = _01;
-        object_02 = _02;
-
-        xDistance = calculateXDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
-        yDistance = calculateYDistance(object_01.getCanvasLocation(), object_02.getCanvasLocation());
     }
 
     //two object are passed for comparison
-    public void detectCollision(GameObject _01, GameObject _02) {
+    public boolean detectCollision(GameObject _01, GameObject _02){
         object_01 = _01;
         object_02 = _02;
+
+        //Simple detection method by checking if squares around each object overlap
+        return isBoxCollision();
     }
 
-    public int calculateFutureDistance(GameObject _01, GameObject _02) {
-        int distanceToReturn = 0;
+    public boolean isBoxCollision(){
+        int minXDistance = object_01.size.getWidthRadius() + object_02.size.getWidthRadius();
+        int minYDistance = object_01.size.getHeightRadius() + object_02.size.getHeightRadius();
+        return (calculateXDistance() <= minXDistance && calculateYDistance() <= minYDistance);
+    }
 
+    //TODO What is this? Maybe this is to check for collission before update the object...
+    private int calculateFutureDistance(GameObject _01, GameObject _02) {
+        int distanceToReturn = 0;
+        //I should make a location function that is pass a vector to update
         CanvasLocation futureLocation_01 = _01.getCanvasLocation();  //This is all preparation below
         CanvasLocation futureLocation_02 = _02.getCanvasLocation();
-
-        futureLocation_01.applyVector(_01.getObjectVector()); //I should make a location function that is pass a vector to update
+        futureLocation_01.applyVector(_01.getObjectVector());
         futureLocation_02.applyVector(_02.getObjectVector());
-        //futureDistance =  calculateDistance();		//Almost did an approach recursive in nature, changed mind
+
         return distanceToReturn;
     }
 
     //I am using a sqrt but i can optimize this
-    public int calculateDistance(CanvasLocation location1, CanvasLocation location2) {
-        return (int) Math.sqrt(Math.pow(calculateXDistance(location1, location2), 2) + Math.pow(calculateYDistance(location1, location2), 2));
+    private int calculateDistance() {
+        return (int) Math.sqrt(Math.pow(calculateXDistance(), 2)
+                + Math.pow(calculateYDistance(), 2));
     }
 
-    public int calculateXDistance(CanvasLocation location1, CanvasLocation location2) {
-        return Math.abs(location1.getY() - location2.getY());
+    private int calculateXDistance(){
+        return Math.abs(object_01.location.getX() - object_02.location.getX());
     }
 
-    public int calculateYDistance(CanvasLocation location1, CanvasLocation location2) {
-        return Math.abs(location1.getY() - location2.getY());
+    private int calculateYDistance(){
+        return Math.abs(object_01.location.getAxisY() - object_02.location.getAxisY());
     }
 
     public String toString() {
         String stringToReturn = "";
-        stringToReturn += "xDistance:" + xDistance + "\nYdistance:" + yDistance + "\n Distance apart:" + currentDistance;
+        stringToReturn += "xDistance:" + calculateXDistance() +
+                "\nYdistance:" + calculateYDistance()+ "\n";
         return stringToReturn;
     }
 

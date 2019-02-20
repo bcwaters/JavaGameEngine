@@ -2,24 +2,19 @@ package com.devwaters.JavaGameEngine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.Random;
+import java.util.concurrent.ThreadLocalRandom;
 
 class GameObject extends JComponent  // This class represents heros, walls, anything physical in the game
 {
     CanvasLocation location;
     ObjectSize size;
-    GameEvent event = new GameEvent();
+
     private int objectType;
     // this does not have an object id because the object id represent a location in a array.
 
-    public final int NULLOBJECT = -1;
-    public final int HERO = 1;
-
-    public final int MOVEUP = event.MOVE_HERO_UP;
-    public final int MOVEDOWN = event.MOVE_HERO_DOWN;
-    public final int MOVERIGHT = event.MOVE_HERO_RIGHT;
-    public final int MOVELEFT = event.MOVE_HERO_LEFT;
-    public final int COMMAND_01 = event.HERO_COMMAND_01;
-    public final int COMMAND_02 = event.HERO_COMMAND_02;
+    static final int NULLOBJECT = -1;
+    static final int HERO = 1;
 
     boolean isMoving;
 
@@ -28,21 +23,24 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
     //For now an image will be used
     Vector objectVector; //A vector will be used to represent momentum in this class.
 
-
-    public GameObject() //make a null object
-    {
+    //make a null object
+    public GameObject() {
         objectType = NULLOBJECT;
     }
 
-    public GameObject(int x, int y)//constructor for testing
+    //constructor for testing
+    public GameObject(int x, int y, int _objectType)
     {
-        objectType = HERO;
+        objectType = _objectType;
         location = new CanvasLocation(x, y);
         objectVector = new Vector(0, 0);
         isMoving = false;
         size = new ObjectSize(location, 50, 50);
     }
 
+    public ObjectSize getObjectSize(){
+        return size;
+    }
     public boolean withinVectorBounds(Vector limit) {
 
         Vector magnitude = objectVector.getMagnitude();
@@ -79,40 +77,52 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
 
     }
 
+    private Color getRandomColor(){
+        int R = ThreadLocalRandom.current().nextInt(0, 250);
+        int G = ThreadLocalRandom.current().nextInt(0, 250);
+        int B = ThreadLocalRandom.current().nextInt(0, 250);
+        return new Color(R,G,B);
+    }
     public void paintObject(Graphics g) {
         g.fillOval(location.getX(), location.getY(), size.getHeight(), size.getWidth());
-        g.setColor(Color.RED);
+        g.setColor(getRandomColor());
         g.fillOval(size.getCenterPoint().getX(), size.getCenterPoint().getY(), 2, 2);
     }
 
     public void setLocation(int x, int y) {
         location = new CanvasLocation(x, y);
     }
-    public void processGameEvent(GameEvent passedEvent) {
-        //System.out.println("object called to process event: +" + passedEvent);
-        if (passedEvent.getEventType() == MOVEUP) {
+
+    //TODO this needs to be moved up in state so that the datacontroller
+    //does something like GameObject.moveUp() when a key is pressed
+    public void processPlayerCommand(int keyCode) {
+        if (keyCode == KeyPressedEvent.MOVE_HERO_UP) {
             moveUp();
         }
-        if (passedEvent.getEventType() == MOVEDOWN) {
+        if (keyCode == KeyPressedEvent.MOVE_HERO_DOWN) {
             moveDown();
         }
-        if (passedEvent.getEventType() == MOVERIGHT) {
+        if (keyCode == KeyPressedEvent.MOVE_HERO_RIGHT) {
             moveRight();
         }
-        if (passedEvent.getEventType() == MOVELEFT) {
+        if (keyCode == KeyPressedEvent.MOVE_HERO_LEFT) {
             moveLeft();
-        }
-        if (passedEvent.getEventType() == passedEvent.LIMITEVENT) {
-            addVector(passedEvent.getEventVector());
-        }
-        if (passedEvent.getEventType() == passedEvent.DECAYEVENT) {
-            addVector(passedEvent.getEventVector());
-            isMoving = false;
         }
     }
 
-    public void moveUp() // This will add a vector to the object, that way all location updates are processed within the event processor
-    {
+    //TODO just like keyevent it is like that this state can be pulled up to data controller
+    //so datacontroller would call GameObject.addVector(value)
+    public void applyPhysicsEvent(PhysicsEvent e){
+        if (e.getEventType() == PhysicsEvent.LIMITEVENT) {
+            addVector(e.getEventVector());
+        }
+        if (e.getEventType() == PhysicsEvent.DECAYEVENT) {
+            addVector(e.getEventVector());
+            isMoving = false;
+        }
+    }
+    // This will add a vector to the object, that way all location updates are processed within the event processor
+    public void moveUp(){
         isMoving = true;
         objectVector.addJ(-1);
     }
@@ -129,7 +139,6 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
 
     public void setIsMoving(boolean movingState) {
         isMoving = movingState;
-
     }
 
     public void moveLeft() {

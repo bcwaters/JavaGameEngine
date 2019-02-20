@@ -1,4 +1,10 @@
 package com.devwaters.JavaGameEngine;
+
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Stack;
+
 //this class will add vectors of objects and detect collisions
 class EnvironmentPhysics {
     //This class will receive an array of gameObjects and methods that make changes will return the updated array
@@ -7,17 +13,20 @@ class EnvironmentPhysics {
     int decayAmount = 1;//
     final int MAXARRAYSIZE = 100;
     int currentEventArraySize;
-    CollisionDetection collisionDetector;
+    CollisionDetection CollisionDetector;
     GameEvent event = new GameEvent();
     Vector eventVector; //Physics needs a storage for vector to pass along to a gameEvent
-    GameObject[] gameObjects;
+    ArrayList<GameObject> gameObjectArrayList;
     GameEvent[] changes;
+
+    Stack<PhysicsEvent> changesStack;
+
     public Vector speedLimit; // This will determine the max size of a vector in the current evironment. absolute value is important
     public EnvironmentPhysics(){
         currentEventArraySize = 0;
-
-        changes = new GameEvent[MAXARRAYSIZE];
-        gameObjects = new GameObject[100];
+        CollisionDetector = new CollisionDetection();
+        changesStack = new Stack<PhysicsEvent>();
+       
         speedLimit = new Vector(20, 20);
         // I will make a new environment physics record which hold info like speed limit gravity etc to pass in a constructor
     }
@@ -28,17 +37,18 @@ class EnvironmentPhysics {
     }
 
     public void clearVectors() {
-        for (int i = 0; gameObjects[i].getObjectType() != gameObjects[i].NULLOBJECT; i++) {
-            gameObjects[i].clearVector();
+        for (int i = 0; i<gameObjectArrayList.size(); i++) {
+            gameObjectArrayList.get(i).clearVector();
         }
     }
 
-    public void applySpeedLimit() {
-        for (int i = 0; gameObjects[i].getObjectType() != gameObjects[i].NULLOBJECT; i++) {
-            if (gameObjects[i].withinVectorBounds(speedLimit)){
+    //TODO use Foreach and Filter instead
+    public void applySpeedLimit(){
+        for (int i = 0; i<gameObjectArrayList.size(); i++) {
+            if (gameObjectArrayList.get(i).withinVectorBounds(speedLimit)){
                 //if the speedLimit is broken change object
-                eventVector = gameObjects[i].applyVectorLimit(speedLimit);
-                addGameEvent(new GameEvent(eventVector, i, event.LIMITEVENT));
+                eventVector = gameObjectArrayList.get(i).applyVectorLimit(speedLimit);
+                addGameEvent(new PhysicsEvent(eventVector, i, PhysicsEvent.LIMITEVENT));
             //adds an event to the array that is being returned. This event will contain the objects new vector
             }
         }
@@ -46,51 +56,37 @@ class EnvironmentPhysics {
 
     public void applyVectorDecay() {
 
-        System.out.println("applyVector Decay called");
+       // System.out.println("applyVector Decay called");
         Vector vectorToApply;
-        for (int i = 0; i < gameObjects.length; i++) {
-            if (gameObjects[i].getObjectType() != gameObjects[i].NULLOBJECT) {
-                vectorToApply = gameObjects[i].applyVectorDecay(decayLimit, decayAmount);
+        for (int i = 0; i < gameObjectArrayList.size(); i++) {
+            if (gameObjectArrayList.get(i).getObjectType() != GameObject.NULLOBJECT) {
+                vectorToApply = gameObjectArrayList.get(i).applyVectorDecay(decayLimit, decayAmount);
             } else {
                 vectorToApply = new Vector(0, 0);
             }
            // System.out.println("DECAY VECTOR: " + vectorToApply);
-            if (gameObjects[i].getObjectType() != gameObjects[i].NULLOBJECT) {
-                System.out.println("VECTORDECAY APPLIED: ");
-                addGameEvent(new GameEvent(vectorToApply, i, event.DECAYEVENT));
+            if (gameObjectArrayList.get(i).getObjectType() != GameObject.NULLOBJECT) {
+               // System.out.println("VECTORDECAY APPLIED: ");
+                addGameEvent(new PhysicsEvent(vectorToApply, i, PhysicsEvent.DECAYEVENT));
             }
         }
     }
 
-    public void addGameEvent(GameEvent _event) {
-        if (currentEventArraySize < MAXARRAYSIZE) {
-            changes[currentEventArraySize] = _event;
-            currentEventArraySize++;
-        }
+    public void addGameEvent(PhysicsEvent _event) {
+        changesStack.push(_event);
     }
 
-    public void setArray(GameObject[] passedArray) {
-
-        gameObjects = passedArray;
+    public void setArray(ArrayList<GameObject> passedArray) {
+        gameObjectArrayList = passedArray;
     }
 
-    public void clearGameEventArray() {
-        for (int i = 0; i < MAXARRAYSIZE; i++) {
-            changes[i] = new GameEvent();
-        }
+
+    public Stack<PhysicsEvent> getEventStack(){
+        return changesStack;
     }
-
-    //this returns an array of gameEvents to be processed
-    public GameEvent[] returnChanges() {
-        GameEvent[] filler = new GameEvent[MAXARRAYSIZE];
-        for (int i = 0; i < MAXARRAYSIZE; i++) {
-            filler[i] = changes[i];        //clear current array and send a copy
-        }
-
-        currentEventArraySize = 0;
-        //System.out.println("returnChange called event: " + filler[0]);
-        clearGameEventArray();
-        return filler;
+    public void pushPhysicsEventsToGameEventStack(Stack<GameEvent> mainStack) {
+        mainStack.addAll(changesStack);
+        changesStack.clear();
     }
 
 }

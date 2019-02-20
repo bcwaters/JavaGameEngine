@@ -2,32 +2,37 @@ package com.devwaters.JavaGameEngine;
 
 import javax.swing.*;
 import java.awt.*;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
 
 class Screen extends JPanel {
-    GameObject[] gameObjects;
-    Graphics currentGraphics;
+    ArrayList<GameObject> gameObjectArrayList;
+    boolean tempCollisionCheck = false;
 
     public Screen(GameObject _onlyObject) {
-        gameObjects = new GameObject[100];
-        gameObjects[0] = _onlyObject;
         setBackground(Color.BLACK);
         setSize(300, 400);
-    }//end constructor
-
-    public void paintComponent(Graphics g){
-
-        super.paintComponent(g);
-        gameObjects[0].paintObject(g);
-        g.setColor(Color.BLUE);
-        gameObjects[1].paintObject(g);
-        g.drawString("yes", 55, 55);
     }
 
+    public void paintComponent(Graphics g){
+        super.paintComponent(g);
+        gameObjectArrayList.forEach(gameObject -> gameObject.paintObject(g) );
+       paintUI(g);
+    }
+
+    private void paintUI(Graphics g){
+        g.setColor(Color.RED);
+        g.drawString("Current Collision: " + tempCollisionCheck, 500, 600);
+    }
     public void setGraphics(Graphics g){
     }
 
-    public void setArray(GameObject[] passedArray){
-        gameObjects = passedArray;
+    public void setTempCollisionCheck(boolean collisionPresent){
+        tempCollisionCheck = collisionPresent;
+    }
+
+    public void setArrayList(ArrayList<GameObject> passedArray){
+        gameObjectArrayList = passedArray;
     }
 
 }//end Screen

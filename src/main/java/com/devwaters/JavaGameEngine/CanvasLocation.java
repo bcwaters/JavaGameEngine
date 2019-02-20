@@ -17,6 +17,10 @@ class CanvasLocation {
     public int getY() {
         return y;
     }
+
+    public int getAxisY(){
+        return -(y-800);
+    }
     public void setX(int newX) {
         x = newX;
     }
@@ -24,6 +28,7 @@ class CanvasLocation {
         y = newY;
     }
 
+    //TODO vectors should not be applied within a locatin, this is a physics task
     public void applyVector(Vector vectorToApply) {
         x = x + vectorToApply.getI();
         y = y + vectorToApply.getJ();

@@ -2,19 +2,20 @@ package com.devwaters.JavaGameEngine;
 
 import javax.swing.*;
 import java.awt.*;
-import java.util.Random;
 import java.util.concurrent.ThreadLocalRandom;
 
 class GameObject extends JComponent  // This class represents heros, walls, anything physical in the game
 {
+    Color ObjectColor;
     CanvasLocation location;
-    ObjectSize size;
+    private ObjectSize size;
 
     private int objectType;
     // this does not have an object id because the object id represent a location in a array.
 
     static final int NULLOBJECT = -1;
-    static final int HERO = 1;
+    static final int PLAYER = 1;
+    static final int FIXED = 2;
 
     boolean isMoving;
 
@@ -29,17 +30,34 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
     }
 
     //constructor for testing
-    public GameObject(int x, int y, int _objectType)
-    {
+    public GameObject(int x, int y, int _objectType) {
         objectType = _objectType;
         location = new CanvasLocation(x, y);
         objectVector = new Vector(0, 0);
         isMoving = false;
-        size = new ObjectSize(location, 50, 50);
+        size = new ObjectSize(50, 50);
+
     }
 
-    public ObjectSize getObjectSize(){
-        return size;
+    /**
+     * Constructor for creating a new game object
+     * @param _location X and Y canvas coordinates note: Y==0 is top
+     * @param _size  ObjectSize(height, width)
+     * @param _objectType int code for type. Can be Player, Enemy, Wall, etc
+     */
+    public GameObject(CanvasLocation _location, ObjectSize _size,  int _objectType) {
+        objectType = _objectType;
+        location = _location;
+        objectVector = new Vector(0, 0);
+        isMoving = false;
+        size = _size;
+        if(objectType==FIXED){
+            ObjectColor = Color.LIGHT_GRAY;
+        }
+    }
+
+    public void setSize(ObjectSize newSize){
+        this.size = newSize;
     }
     public boolean withinVectorBounds(Vector limit) {
 
@@ -49,6 +67,15 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
         return testBool;
     }
 
+    public int getWidthRadius(){
+        return size.getWidthRadius();
+    }
+
+    public int getHeightRadius(){
+        return size.getHeightRadius();
+    }
+
+    //TODO this is physics logic maybe it should be moved to Environemnt Physics
     public Vector applyVectorDecay(int decayLimit, int decayAmount) {
         int currentI = objectVector.getI();
         int currentJ = objectVector.getJ();
@@ -83,13 +110,27 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
         int B = ThreadLocalRandom.current().nextInt(0, 250);
         return new Color(R,G,B);
     }
-    public void paintObject(Graphics g) {
-        g.fillOval(location.getX(), location.getY(), size.getHeight(), size.getWidth());
-        g.setColor(getRandomColor());
-        g.fillOval(size.getCenterPoint().getX(), size.getCenterPoint().getY(), 2, 2);
+    public void paintObject(Graphics g){
+        if(ObjectColor == null) {
+            g.setColor(getRandomColor());
+        }else{
+            g.setColor(ObjectColor);
+        }
+        g.fillRect(this.location.getX(), this.location.getY(), size.getWidth(), size.getHeight());
+        g.setColor(Color.GREEN);
+        g.fillRect(getCenterPointX(), getCenterPointY(), 2, 2);
     }
 
-    public void setLocation(int x, int y) {
+    public int getCenterPointX(){
+        return (location.getX() + size.getWidthRadius());
+    }
+
+    public int getCenterPointY(){
+        return (location.getY() + size.getHeightRadius());
+
+    }
+
+    public void setCanvasLocation(int x, int y) {
         location = new CanvasLocation(x, y);
     }
 
@@ -183,8 +224,8 @@ class GameObject extends JComponent  // This class represents heros, walls, anyt
     }
     // This will apply vectors to locations
     public void update(){
-        CanvasLocation updatedLocation = new CanvasLocation(location.getX() + objectVector.getI(), location.getY() + objectVector.getJ());
-        this.setLocation(updatedLocation.getX(), updatedLocation.getY());
+        CanvasLocation updatedLocation = new CanvasLocation(location.getX() + objectVector.getI(),location.getY() + objectVector.getJ());
+        this.setCanvasLocation(updatedLocation.getX(), updatedLocation.getY());
         size.updateCenterPoint(location);
     }
     public String toString() {

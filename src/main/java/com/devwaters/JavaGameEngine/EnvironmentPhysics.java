@@ -11,20 +11,15 @@ class EnvironmentPhysics {
     //to the dataController class
     int decayLimit = 0; //later these will be determined by a profile
     int decayAmount = 1;//
-    final int MAXARRAYSIZE = 100;
     int currentEventArraySize;
-    CollisionDetection CollisionDetector;
-    GameEvent event = new GameEvent();
+
     Vector eventVector; //Physics needs a storage for vector to pass along to a gameEvent
     ArrayList<GameObject> gameObjectArrayList;
-    GameEvent[] changes;
-
     Stack<PhysicsEvent> changesStack;
 
     public Vector speedLimit; // This will determine the max size of a vector in the current evironment. absolute value is important
     public EnvironmentPhysics(){
         currentEventArraySize = 0;
-        CollisionDetector = new CollisionDetection();
         changesStack = new Stack<PhysicsEvent>();
        
         speedLimit = new Vector(20, 20);
@@ -56,7 +51,6 @@ class EnvironmentPhysics {
 
     public void applyVectorDecay() {
 
-       // System.out.println("applyVector Decay called");
         Vector vectorToApply;
         for (int i = 0; i < gameObjectArrayList.size(); i++) {
             if (gameObjectArrayList.get(i).getObjectType() != GameObject.NULLOBJECT) {
@@ -64,9 +58,8 @@ class EnvironmentPhysics {
             } else {
                 vectorToApply = new Vector(0, 0);
             }
-           // System.out.println("DECAY VECTOR: " + vectorToApply);
             if (gameObjectArrayList.get(i).getObjectType() != GameObject.NULLOBJECT) {
-               // System.out.println("VECTORDECAY APPLIED: ");
+
                 addGameEvent(new PhysicsEvent(vectorToApply, i, PhysicsEvent.DECAYEVENT));
             }
         }
@@ -75,18 +68,12 @@ class EnvironmentPhysics {
     public void addGameEvent(PhysicsEvent _event) {
         changesStack.push(_event);
     }
-
     public void setArray(ArrayList<GameObject> passedArray) {
         gameObjectArrayList = passedArray;
     }
-
-
     public Stack<PhysicsEvent> getEventStack(){
         return changesStack;
     }
-    public void pushPhysicsEventsToGameEventStack(Stack<GameEvent> mainStack) {
-        mainStack.addAll(changesStack);
-        changesStack.clear();
-    }
+
 
 }

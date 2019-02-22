@@ -4,26 +4,28 @@ public class NextGame {
     static StateProfile heroFocused = new StateProfile('w', 's', 'a', 'd', 'v', 'b');
 
     public static void main(String[] args) {
+        DisplayFrame GameWindow = new DisplayFrame("GameWindow");
+        GameWindow.setVisible(true);
 
-        GameObject playerGameObject = new GameObject(55, 55, GameObject.HERO);
-        DataController GameState = new DataController(playerGameObject, heroFocused);
-        Thread t1 = new Thread(GameState);
-        DisplayFrame gameWindow = new DisplayFrame("GameWindow");
-        gameWindow.setVisible(true);
-        gameWindow.changeScreen(GameState.currentScreen);
-        GameState.setFocusable(true);
+        GameObject playerGameObject = new GameObject(800, 300, GameObject.PLAYER);
+        EnvironmentModelData GameModelState = new EnvironmentModelData(playerGameObject,
+                heroFocused, GameWindow);
+        Thread GameModelThread = new Thread(GameModelState);
+
+
+        GameModelState.setFocusable(true);
         while (true) {
 
             //Model
-            t1.run();
+            GameModelThread.run();
 
             //Controller
-            //Notify the GameState whenever a user presses a key
-            GameState.pushKeyEventsToGameEventStack(gameWindow.getKeyEventStack());
+            //Notify the GameModelState whenever a user presses a key
+            GameModelState.pushKeyEventsToGameEventStack(GameWindow.getKeyEventStack());
 
             //View
-            GameState.requestFocusInWindow();
-            GameState.currentScreen.repaint();
+            GameModelState.requestFocusInWindow();
+            GameModelState.GameObjectLayer.repaint();
         }
 
     }

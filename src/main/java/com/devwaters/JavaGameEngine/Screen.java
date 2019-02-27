@@ -4,6 +4,8 @@ import javax.swing.*;
 import java.awt.*;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Stack;
 
 
 class Screen extends JPanel {
@@ -12,6 +14,8 @@ class Screen extends JPanel {
     GameObject player;
     DisplayFrame viewport;
     Graphics gClone;
+    int[] locationClicked = new int[]{0,0,0,0};
+    boolean drawMouseClicked = false;
 
     int xFocus;
     int yFocus;
@@ -44,6 +48,13 @@ class Screen extends JPanel {
 
     }
 
+    //TODO implement pathfinding for drawing the shortpath from start to finish with no collisions
+    public void setLineToDraw(int[] coordPair){
+       locationClicked = coordPair;
+        drawMouseClicked = true;
+
+    }
+
     private void setScreenFocus(Graphics g){
         xFocus = player.location.getX() - viewport.getWidth()/2;
         yFocus = 0;
@@ -53,12 +64,18 @@ class Screen extends JPanel {
     }
 
     private void paintUI(Graphics g){
+        if(drawMouseClicked) {
+            g.setColor(Color.WHITE);
+            g.drawLine(locationClicked[0], locationClicked[1], gameObjectArrayList.get(0).location.getX(), gameObjectArrayList.get(0).location.getY());
+        }
         g.setColor(Color.RED);
-        g.drawString("playerLocation: " + player.location.getX() + ", " + player.location.getY(), 500,650);
-        g.drawString("screenLocation: " + this.getLocation().toString(), 500,400);
-        g.drawString("viewport width: " + viewport.getWidth(), 500,300);
-        g.drawString("Current Collision: " + tempCollisionCheck, 500, 600);
-        g.drawString("graphics location: " + g.getClipBounds().toString(), 500, 450);
+        g.setColor(Color.RED);
+        g.drawString("available controls: w,s,a,d, LEFTCLICK" ,900,200 );
+        g.drawString("playerLocation: " + player.location.getX() + ", " + player.location.getY(), 900,650);
+        g.drawString("screenLocation: " + this.getLocation().toString(), 900,400);
+        g.drawString("viewport width: " + viewport.getWidth(), 900,300);
+        g.drawString("Current Collision: " + tempCollisionCheck, 900, 600);
+        g.drawString("graphics location: " + g.getClipBounds().toString(), 900, 450);
         tempCollisionCheck = false;
     }
     public void setGraphics(Graphics g){

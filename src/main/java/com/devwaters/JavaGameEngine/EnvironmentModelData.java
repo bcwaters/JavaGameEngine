@@ -32,16 +32,13 @@ class EnvironmentModelData extends JFrame implements Runnable{
 
         //Change the screen according to state... ie paused
         viewport.changeScreen(GameObjectLayer);
-        GameObjectLayer.add(new JLabel("Connectors example. You can drag the connected component to see how the line will be changed"),
-                new GridBagConstraints(0, 0, 2, 1, 1, 0, GridBagConstraints.NORTHWEST, GridBagConstraints.HORIZONTAL, new Insets(5, 5, 0, 5), 0, 0));
-
 
     }
 
     private void makePlatforms(){
         int j = -1;
         while(j++<5) {
-            gameObjectArrayList.add(new GameObject(new CanvasLocation(0+(j*200), 500),
+            gameObjectArrayList.add(new GameObject(new CanvasLocation(5*j+(j*200), 500),
                     new ObjectSize(200, 20), GameObject.FIXED));
         }
     }
@@ -52,6 +49,12 @@ class EnvironmentModelData extends JFrame implements Runnable{
     public void pushKeyEventsToGameEventStack(Stack<java.lang.Character> characterStack) {
         while(!characterStack.isEmpty()){
             gameEventStack.push(currentProfile.getGameEvent(characterStack.pop()));
+        }
+    }
+
+    public void pushMouseEventsToGameEventStack(Stack<int[]> clickStack) {
+        while(!clickStack.isEmpty()){
+            gameEventStack.push(new MouseClickedEvent(clickStack.pop()));
         }
     }
 
@@ -81,6 +84,13 @@ class EnvironmentModelData extends JFrame implements Runnable{
 
                 if (e instanceof CollisionEvent) {
                     handleCollisionEvent((CollisionEvent)e);
+                }
+
+                if (e instanceof MouseClickedEvent) {
+                    MouseClickedEvent mouseEvent = (MouseClickedEvent)e;
+                    System.out.println(mouseEvent.coordinates[0] + ", " + mouseEvent.coordinates[1]);
+                    GameObjectLayer.setLineToDraw(new int[]{
+                            mouseEvent.coordinates[0], mouseEvent.coordinates[1]});
                 }
                 //collsioinEvent do nothing
                 //doNothing(e)

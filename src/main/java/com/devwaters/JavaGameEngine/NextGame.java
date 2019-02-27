@@ -22,6 +22,7 @@ public class NextGame {
             //Controller
             //Notify the GameModelState whenever a user presses a key
             GameModelState.pushKeyEventsToGameEventStack(GameWindow.getKeyEventStack());
+            GameModelState.pushMouseEventsToGameEventStack(GameWindow.getClickEventStack());
 
             //View
             GameModelState.requestFocusInWindow();
